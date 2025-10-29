@@ -6,75 +6,83 @@
     <title>Закрытый Клуб Фокусников</title>
     <!-- Подключение Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Конфигурация шрифта и ТЕМЫ -->
+    <!-- Конфигурация шрифта и ТЕМЫ (Полный редизайн) -->
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap');
         body {
             font-family: 'Inter', sans-serif;
-            transition: background-color 0.3s, color 0.3s;
+            transition: background-color 0.4s, color 0.4s;
         }
 
-        /* --- Общие переменные --- */
-        :root {
-            /* Fallback/Default Colors (Adult Theme) */
-            --bg-primary: #1e293b; /* Slate-800 */
-            --bg-secondary: #0f172a; /* Slate-900 */
-            --color-accent: #facc15; /* Amber-500 (Золото) */
-            --color-text: #e2e8f0; /* Slate-200 */
-            --shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+        /* --- ВЗРОСЛАЯ ТЕМА (Mystical Emerald) --- */
+        .adult-theme {
+            --bg-primary: #1f2937; /* Dark Slate - Header/Cards */
+            --bg-secondary: #111827; /* Darker Slate/Near Black - Body */
+            --color-accent: #34d399; /* Emerald Green - Accent */
+            --color-text: #f3f4f6; /* Light Text */
+            --color-subtle: #9ca3af; /* Gray-400 */
+            --shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
         }
 
-        /* --- ВЗРОСЛАЯ ТЕМА (По умолчанию и класс adult-theme) --- */
-        body, .adult-theme {
+        body.adult-theme {
             background-color: var(--bg-secondary);
             color: var(--color-text);
         }
 
         /* Специальные классы для взрослой темы */
-        .adult-theme .main-header { background-color: var(--bg-primary); box-shadow: var(--shadow); }
-        .adult-theme .card-bg { background-color: var(--bg-primary); border: 1px solid #334155; }
+        .adult-theme .main-header, .adult-theme .nav-bg { background-color: var(--bg-primary); box-shadow: var(--shadow); }
+        .adult-theme .card-bg { background-color: var(--bg-primary); border: 1px solid #374151; }
         .adult-theme .text-accent { color: var(--color-accent); }
-        .adult-theme .nav-bg { background-color: var(--bg-primary); border-top: 1px solid #334155; }
+        .adult-theme .nav-button { color: var(--color-subtle); }
         .adult-theme .nav-button.active-nav { color: var(--color-accent); }
-        .adult-theme .btn-primary { background-color: var(--color-accent); color: #1e293b; font-weight: 700; }
-        .adult-theme .btn-primary:hover { background-color: #eab308; }
-        .adult-theme input, .adult-theme select { background-color: #334155; border-color: #475569; color: var(--color-text); }
+        .adult-theme .btn-primary { background-color: var(--color-accent); color: var(--bg-primary); font-weight: 700; }
+        .adult-theme .btn-primary:hover { background-color: #10b981; }
+        .adult-theme input, .adult-theme select, .adult-theme textarea { background-color: #374151; border-color: #4b5563; color: var(--color-text); }
         
-        /* --- ДЕТСКАЯ ТЕМА (child-theme) --- */
+        /* --- ДЕТСКАЯ ТЕМА (Playful Azure) --- */
         .child-theme {
-            --bg-primary: #818cf8; /* Indigo-400 */
-            --bg-secondary: #f7f7f7; /* Light Gray */
-            --color-accent: #ef4444; /* Red-500 */
-            --color-text: #1f2937; /* Gray-800 */
-            --shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            --bg-primary: #60a5fa; /* Blue-400 - Header/Accent */
+            --bg-secondary: #ffffff; /* White/Light Background - Body/Cards */
+            --color-accent: #f97316; /* Orange-500 - Main Accent */
+            --color-text: #111827; /* Dark Text */
+            --color-subtle: #4b5563; /* Gray-600 */
+            --shadow: 0 4px 10px rgba(96, 165, 250, 0.4); /* Blue Shadow */
         }
 
-        .child-theme {
-            background-color: var(--bg-secondary);
+        body.child-theme {
+            background-color: #f3f4f6;
             color: var(--color-text);
         }
         
         /* Специальные классы для детской темы */
         .child-theme .main-header { background-color: var(--bg-primary); box-shadow: var(--shadow); }
-        .child-theme .card-bg { background-color: white; border: 1px solid #e5e7eb; border-radius: 1.5rem; /* Более круглые */ }
+        .child-theme .card-bg { background-color: var(--bg-secondary); border: 1px solid #e5e7eb; border-radius: 1.5rem; }
         .child-theme .text-accent { color: var(--color-accent); }
-        .child-theme .nav-bg { background-color: white; border-top: 1px solid #e5e7eb; }
+        .child-theme .nav-bg { background-color: white; border-top: 1px solid #d1d5db; }
+        .child-theme .nav-button { color: var(--color-subtle); }
         .child-theme .nav-button.active-nav { color: var(--color-accent); }
-        .child-theme .btn-primary { background-color: #3b82f6; /* Blue-500 */ color: white; font-weight: 800; }
+        .child-theme .btn-primary { background-color: #3b82f6; /* Blue-500 */ color: white; font-weight: 800; border-radius: 0.75rem; }
         .child-theme .btn-primary:hover { background-color: #2563eb; }
-        .child-theme input, .child-theme select { background-color: #f3f4f6; border-color: #d1d5db; color: var(--color-text); border-radius: 0.75rem; /* Более круглые */ }
+        .child-theme input, .child-theme select, .child-theme textarea { background-color: #f9fafb; border-color: #d1d5db; color: var(--color-text); border-radius: 0.75rem; }
 
-        /* Общие стили для контента */
-        .card-bg { transition: all 0.3s; }
-
-        /* Цвета навигации по умолчанию (в Tailwind) */
-        .nav-button { transition: color 0.15s; }
-        .nav-button.active-nav { font-weight: 700; }
+        /* --- АНИМАЦИИ И ПЕРЕХОДЫ --- */
+        .card-bg, .btn-primary, .nav-button { transition: all 0.3s ease-in-out; }
+        .lesson-card:hover {
+            transform: translateY(-3px) scale(1.01);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15);
+        }
+        .child-theme .lesson-card:hover {
+            transform: rotate(1deg) scale(1.02); /* Легкий наклон */
+            box-shadow: 0 8px 15px rgba(249, 115, 22, 0.3); /* Оранжевая тень */
+        }
+        .adult-theme .lesson-card:hover {
+            box-shadow: 0 10px 20px rgba(52, 211, 153, 0.3); /* Изумрудная тень */
+        }
     </style>
 </head>
 <body class="min-h-screen flex flex-col adult-theme"> <!-- Начальный класс Adult-Theme -->
 
-    <!-- Загрузка Firebase и инициализация -->
+    <!-- Загрузка Firebase и LLM/API -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
         import { getAuth, signInAnonymously, signInWithCustomToken, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
@@ -96,7 +104,7 @@
     <!-- Основной контейнер приложения -->
     <div id="app" class="flex flex-col flex-grow">
         <!-- Заголовок и текущая неделя -->
-        <header class="main-header p-4 shadow-lg sticky top-0 z-10">
+        <header class="main-header p-4 sticky top-0 z-10">
             <div class="container mx-auto flex justify-between items-center">
                 <h1 class="text-2xl font-extrabold tracking-tight">🪄 Club Magic</h1>
                 <div id="weekly-theme" class="py-1 px-3 rounded-full text-sm font-medium shadow-md" style="background-color: var(--color-accent); color: var(--bg-primary);">
@@ -115,7 +123,7 @@
             <div class="container mx-auto flex justify-around items-center h-16">
                 <button data-section="chat" class="nav-button flex flex-col items-center p-2 text-indigo-600 font-semibold active-nav">
                     <span class="text-xl">💬</span>
-                    <span class="text-xs">Чат</span>
+                    <span class="text-xs">Ментор</span>
                 </button>
                 <button data-section="lessons" class="nav-button flex flex-col items-center p-2 text-gray-500">
                     <span class="text-xl">📚</span>
@@ -148,17 +156,17 @@
             <p class="text-gray-400 mb-6">Пожалуйста, заполните анкету, чтобы получить доступ к урокам.</p>
             <form id="profile-form">
                 <div class="mb-4">
-                    <label for="p-name" class="block text-sm font-medium text-gray-400">Имя</label>
-                    <input type="text" id="p-name" required class="mt-1 block w-full rounded-lg border-gray-300 shadow-sm focus:border-indigo-500 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 p-2 border">
+                    <label for="p-name" class="block text-sm font-medium text-color-subtle">Имя</label>
+                    <input type="text" id="p-name" required class="mt-1 block w-full rounded-lg shadow-sm focus:ring-2 focus:ring-accent p-2 border">
                 </div>
                 <div class="grid grid-cols-2 gap-4 mb-4">
                     <div>
-                        <label for="p-age" class="block text-sm font-medium text-gray-400">Возраст</label>
-                        <input type="number" id="p-age" required min="5" max="99" class="mt-1 block w-full rounded-lg border-gray-300 shadow-sm focus:border-indigo-500 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 p-2 border">
+                        <label for="p-age" class="block text-sm font-medium text-color-subtle">Возраст</label>
+                        <input type="number" id="p-age" required min="5" max="99" class="mt-1 block w-full rounded-lg shadow-sm focus:ring-2 focus:ring-accent p-2 border">
                     </div>
                     <div>
-                        <label for="p-gender" class="block text-sm font-medium text-gray-400">Пол</label>
-                        <select id="p-gender" required class="mt-1 block w-full rounded-lg border-gray-300 shadow-sm focus:border-indigo-500 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 p-2 border">
+                        <label for="p-gender" class="block text-sm font-medium text-color-subtle">Пол</label>
+                        <select id="p-gender" required class="mt-1 block w-full rounded-lg shadow-sm focus:ring-2 focus:ring-accent p-2 border">
                             <option value="">Выберите</option>
                             <option value="male">Мужской</option>
                             <option value="female">Женский</option>
@@ -166,13 +174,13 @@
                     </div>
                 </div>
                 <div class="mb-6">
-                    <label for="p-city" class="block text-sm font-medium text-gray-400">Город</label>
-                    <input type="text" id="p-city" required class="mt-1 block w-full rounded-lg border-gray-300 shadow-sm focus:border-indigo-500 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 p-2 border">
+                    <label for="p-city" class="block text-sm font-medium text-color-subtle">Город</label>
+                    <input type="text" id="p-city" required class="mt-1 block w-full rounded-lg shadow-sm focus:ring-2 focus:ring-accent p-2 border">
                 </div>
                 <button type="submit" class="btn-primary w-full font-bold py-3 rounded-lg shadow-lg transition duration-150 ease-in-out">
                     Получить Доступ!
                 </button>
-                <p id="tg-id-info" class="text-center text-xs text-gray-500 mt-3"></p>
+                <p id="tg-id-info" class="text-center text-xs text-color-subtle mt-3"></p>
             </form>
         </div>
     </div>
@@ -196,6 +204,54 @@
         
         // Переменная для хранения профиля
         let userProfile = null;
+        let chatHistory = []; // История чата для LLM
+
+        // --- LLM API Configuration ---
+        const GEMINI_MODEL = 'gemini-2.5-flash-preview-09-2025';
+        const API_KEY = ""; // Provided by Canvas environment
+        const API_URL = `https://generativelanguage.googleapis.com/v1beta/models/${GEMINI_MODEL}:generateContent?key=${API_KEY}`;
+        
+        // Функция для LLM с экспоненциальным отступлением
+        async function callGeminiApi(userPrompt, systemPrompt, maxRetries = 5) {
+            const payload = {
+                contents: [{ parts: [{ text: userPrompt }] }],
+                systemInstruction: { parts: [{ text: systemPrompt }] },
+            };
+            
+            for (let i = 0; i < maxRetries; i++) {
+                try {
+                    const response = await fetch(API_URL, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(payload)
+                    });
+
+                    if (!response.ok) {
+                        if (response.status === 429 && i < maxRetries - 1) {
+                            const delay = Math.pow(2, i) * 1000;
+                            console.warn(`Rate limit exceeded (429). Retrying in ${delay / 1000}s...`);
+                            await new Promise(resolve => setTimeout(resolve, delay));
+                            continue;
+                        }
+                        throw new Error(`API call failed with status: ${response.status}`);
+                    }
+
+                    const result = await response.json();
+                    const text = result.candidates?.[0]?.content?.parts?.[0]?.text || "Не удалось получить ответ от Наставника. Попробуйте перефразировать вопрос.";
+                    return text;
+
+                } catch (error) {
+                    console.error("Gemini API Error:", error);
+                    if (i === maxRetries - 1) {
+                        return "Произошла критическая ошибка при обращении к Магическому Наставнику.";
+                    }
+                    const delay = Math.pow(2, i) * 1000;
+                    console.warn(`API error. Retrying in ${delay / 1000}s...`);
+                    await new Promise(resolve => setTimeout(resolve, delay));
+                }
+            }
+            return "Произошла критическая ошибка при обращении к Магическому Наставнику.";
+        }
 
         // --- Функция установки Темы (Child/Adult) ---
         function setTheme(age) {
@@ -219,46 +275,36 @@
                 // Включаем подробное логирование
                 setLogLevel('debug');
                 
-                // Проверяем, есть ли валидный конфиг для инициализации Firebase (ИСПРАВЛЕНИЕ ОШИБКИ)
                 if (Object.keys(firebaseConfig).length === 0 || !firebaseConfig.projectId) {
                     console.error("Firebase Initialization Error: firebaseConfig is missing or invalid. Proceeding without database access.");
-                    db = null; // Явно устанавливаем db в null
-                    auth = null; // Явно устанавливаем auth в null
+                    db = null;
+                    auth = null;
                 } else {
                     const app = initializeApp(firebaseConfig);
                     db = getFirestore(app);
                     auth = getAuth(app);
                 }
                 
-
-                // Получаем ID Telegram, если доступно
                 const tgId = window.Telegram?.WebApp?.initDataUnsafe?.user?.id || 'TEST_TG_ID';
                 document.getElementById('tg-id-info').textContent = `Привязка к Telegram ID: ${tgId}`;
 
-                // Аутентификация
                 await new Promise((resolve) => {
-                    // Используем auth, если он был инициализирован, иначе используем временный для signInAnonymously
                     const currentAuth = auth || getAuth(initializeApp({ apiKey: 'fallback', authDomain: 'fallback.firebaseapp.com', projectId: 'fallback' }));
                     
                     oasc(currentAuth, async (user) => {
                         if (user) {
                             userId = user.uid;
-                            console.log("Firebase Authenticated. User ID:", userId);
                         } else {
                             try {
                                 if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
                                     const result = await siwtct(currentAuth, __initial_auth_token);
                                     userId = result.user.uid;
-                                    console.log("Signed in with custom token. User ID:", userId);
                                 } else {
                                     const result = await inApp(currentAuth);
                                     userId = result.user.uid;
-                                    console.log("Signed in anonymously. User ID:", userId);
                                 }
-                                
                             } catch (e) {
                                 console.error("Authentication failed or fallback failed:", e);
-                                // При ошибке аутентификации, используем случайный ID
                                 userId = crypto.randomUUID();
                             }
                         }
@@ -267,29 +313,25 @@
                     });
                 });
 
-                // После аутентификации, проверяем профиль
                 await checkUserProfile();
 
             } catch (e) {
                 console.error("Firebase general initialization or catch error:", e);
-                db = null; // Убеждаемся, что DB сброшен
-                userId = userId || crypto.randomUUID(); // Убеждаемся, что есть хотя бы случайный ID
+                db = null;
+                userId = userId || crypto.randomUUID();
                 isAuthReady = true; 
-                // В случае общей ошибки, также вызываем checkUserProfile, чтобы разблокировать UI
                 await checkUserProfile();
             }
         }
         
         // --- Проверка и загрузка профиля ---
         async function checkUserProfile() {
-            // ИСПРАВЛЕНИЕ ОШИБКИ: Если БД не инициализирована (db === null/undefined) или аутентификация не прошла,
-            // мы не можем проверить профиль в Firestore. Мы должны показать модальное окно, чтобы разблокировать приложение.
             if (!isAuthReady || !userId || !db) {
                 console.warn("DB or Auth not fully ready/failed. Forcing profile modal to prevent infinite loading.");
-                setTheme(18); // Устанавливаем взрослую тему по умолчанию при ошибке
+                setTheme(18);
                 document.getElementById('profile-modal').classList.add('flex');
                 document.getElementById('profile-modal').classList.remove('hidden');
-                return; // Останавливаем выполнение, чтобы пользователь заполнил анкету
+                return;
             }
             
             const profileRef = doc(db, `artifacts/${appId}/users/${userId}/profile/user_info`);
@@ -297,26 +339,18 @@
                 const profileSnap = await getDoc(profileRef);
                 if (profileSnap.exists()) {
                     userProfile = profileSnap.data();
-                    console.log("User profile loaded:", userProfile);
-                    
-                    // !!! УСТАНОВКА ТЕМЫ ПО ВОЗРАСТУ !!!
                     setTheme(userProfile.age);
-
-                    // Профиль есть, скрываем модальное окно и показываем контент
                     document.getElementById('profile-modal').classList.add('hidden');
                     document.getElementById('profile-modal').classList.remove('flex');
-                    renderSection('chat'); // Показываем стартовый раздел
+                    renderSection('chat');
                 } else {
-                    console.log("User profile not found. Showing registration modal.");
-                    setTheme(18); // Устанавливаем взрослую тему, пока не будет введен возраст
-                    // Профиля нет, показываем модальное окно
+                    setTheme(18);
                     document.getElementById('profile-modal').classList.add('flex');
                     document.getElementById('profile-modal').classList.remove('hidden');
                 }
             } catch (e) {
                 console.error("Error checking user profile from Firestore:", e);
-                setTheme(18); // Устанавливаем взрослую тему по умолчанию при ошибке
-                // При ошибке БД, показываем модальное окно для ввода данных
+                setTheme(18);
                 document.getElementById('profile-modal').classList.add('flex');
                 document.getElementById('profile-modal').classList.remove('hidden');
             }
@@ -327,77 +361,46 @@
             e.preventDefault();
 
             const name = document.getElementById('p-name').value;
-            const age = parseInt(document.getElementById('p-age').value); // Получаем как число
+            const age = parseInt(document.getElementById('p-age').value);
             const gender = document.getElementById('p-gender').value;
             const city = document.getElementById('p-city').value;
             const tgId = window.Telegram?.WebApp?.initDataUnsafe?.user?.id || 'TEST_TG_ID';
 
-            const newProfile = {
-                name,
-                age,
-                gender,
-                city,
-                telegramId: tgId,
-                registrationDate: new Date().toISOString()
-            };
-
-            // !!! УСТАНОВКА ТЕМЫ ПО ВОЗРАСТУ !!!
+            const newProfile = { name, age, gender, city, telegramId: tgId, registrationDate: new Date().toISOString() };
             setTheme(age);
 
-            // Если DB доступна, сохраняем в Firestore
             if (db && userId) {
                 const profileRef = doc(db, `artifacts/${appId}/users/${userId}/profile/user_info`);
                 try {
                     await setDoc(profileRef, newProfile);
                     userProfile = newProfile;
-                    console.log("Profile saved successfully to Firestore.");
-                    // Скрываем модальное окно и запускаем приложение
-                    document.getElementById('profile-modal').classList.add('hidden');
-                    document.getElementById('profile-modal').classList.remove('flex');
-                    renderSection('chat');
                 } catch (e) {
-                    console.error("Error saving profile to Firestore:", e);
-                    // Вместо alert(), выводим сообщение об ошибке на консоль и показываем UI-сообщение
-                    // Используем console.error вместо alert, чтобы соответствовать инструкции
-                    console.error("Error saving profile to Firestore: Data saved locally for session."); 
-                    // Продолжаем, используя локальные данные
+                    console.error("Error saving profile to Firestore: Data saved locally for session.", e); 
                     userProfile = newProfile;
-                    document.getElementById('profile-modal').classList.add('hidden');
-                    document.getElementById('profile-modal').classList.remove('flex');
-                    renderSection('chat');
                 }
             } else {
-                // Если БД не инициализирована (ошибка), просто показываем контент с локальными данными
                 console.warn("Firebase DB not available. Profile data stored locally for session.");
                 userProfile = newProfile;
-                document.getElementById('profile-modal').classList.add('hidden');
-                document.getElementById('profile-modal').classList.remove('flex');
-                renderSection('chat');
             }
+            
+            document.getElementById('profile-modal').classList.add('hidden');
+            document.getElementById('profile-modal').classList.remove('flex');
+            renderSection('chat');
         });
 
         // --- Управление разделами ---
         const contentDiv = document.getElementById('content');
         
         function renderSection(sectionName) {
-            // Проверка, заполнен ли профиль
-            // Если профиль отсутствует, вызываем проверку, которая покажет модальное окно.
-            if (!userProfile) {
-                console.log("Profile missing, redirecting to modal check.");
-                checkUserProfile();
-                return;
-            }
+            if (!userProfile) { checkUserProfile(); return; }
 
-            // Обновление активной кнопки навигации
             document.querySelectorAll('.nav-button').forEach(btn => {
-                // Сбрасываем все классы, относящиеся к цвету, чтобы они зависели от CSS-переменных темы
-                btn.classList.remove('text-indigo-600', 'text-gray-500', 'active-nav'); 
+                btn.classList.remove('active-nav'); 
                 if (btn.dataset.section === sectionName) {
                     btn.classList.add('active-nav');
                 }
             });
 
-            // Рендеринг содержимого
             let htmlContent = '';
             switch(sectionName) {
                 case 'chat':
@@ -421,11 +424,16 @@
             }
             contentDiv.innerHTML = htmlContent;
 
-            // Дополнительная логика для раздела "Уроки" после рендеринга
+            // Дополнительная логика для LLM
+            if (sectionName === 'chat') {
+                setupChatLogic();
+            }
+
+            // Дополнительная логика для уроков
             if (sectionName === 'lessons') {
                 document.getElementById('filter-controls').addEventListener('change', applyLessonFilters);
                 document.getElementById('lessons-list').addEventListener('click', handleLessonRating);
-                applyLessonFilters(); // Изначальная загрузка всех уроков
+                applyLessonFilters();
             }
         }
         
@@ -434,22 +442,119 @@
         function renderChat() {
             return `
                 <div class="space-y-4">
-                    <h2 class="text-3xl font-bold text-accent">💬 Чат Клуба</h2>
-                    <p class="text-gray-400">Общий чат для обсуждения фокусов, вопросов и идей. (Здесь будет реализация чата)</p>
+                    <h2 class="text-3xl font-bold text-accent">💬 Магический Наставник</h2>
+                    <p class="text-color-subtle">Задайте любой вопрос о фокусах, реквизите или истории магии. Ваш персональный LLM-ассистент готов помочь!</p>
                     
-                    <div class="card-bg p-4 rounded-xl shadow-lg h-96 overflow-y-auto">
-                        <!-- Пример сообщений -->
-                        <div class="text-sm mb-3">
-                            <span class="font-semibold text-accent">Миша:</span> Всем привет! У кого есть идеи для нового фокуса с монетами?
+                    <div class="card-bg p-4 rounded-xl shadow-lg h-[60vh] flex flex-col">
+                        <div id="chat-history" class="flex-grow overflow-y-auto p-2 space-y-4 mb-4">
+                            <!-- Приветственное сообщение Наставника -->
+                            <div class="flex justify-start">
+                                <div class="bg-blue-600 text-white p-3 rounded-t-xl rounded-br-xl max-w-[80%] shadow-md" style="background-color: var(--color-accent); color: var(--bg-primary);">
+                                    <span class="font-bold">Наставник:</span> ${userProfile.age <= 18 ? 
+                                        'Привет, юный маг! Я твой наставник. Спрашивай о чем угодно, связанном с фокусами! Готов начать твое волшебное путешествие?' : 
+                                        'Приветствую, Мастер. Я — ваш персональный наставник по магии. Как я могу помочь в вашем следующем великом представлении?'}
+                                </div>
+                            </div>
+                            <!-- Здесь будет история сообщений -->
                         </div>
-                        <div class="text-sm mb-3 text-right">
-                            <span class="font-semibold" style="color: var(--color-accent);">Я (Вы):</span> Я только что освоил "Легкое исчезновение". Супер трюк!
+                        
+                        <div class="flex items-center space-x-2">
+                            <textarea id="chat-input" class="flex-grow rounded-lg p-3 resize-none focus:ring-2 focus:ring-accent border" rows="1" placeholder="Ваш вопрос Наставнику..."></textarea>
+                            <button id="chat-send-btn" class="btn-primary flex-shrink-0 w-12 h-12 rounded-full flex items-center justify-center shadow-lg hover:scale-105" title="Отправить">
+                                <span class="text-xl">✨</span>
+                            </button>
                         </div>
-                        <!-- ... -->
+
+                        <div id="chat-loading" class="text-center mt-2 text-sm text-color-subtle hidden">
+                            <div class="animate-spin inline-block h-4 w-4 rounded-full border-b-2 border-accent mr-2"></div>
+                            Наставник думает...
+                        </div>
                     </div>
                 </div>
             `;
         }
+
+        function setupChatLogic() {
+            const input = document.getElementById('chat-input');
+            const sendBtn = document.getElementById('chat-send-btn');
+            const historyDiv = document.getElementById('chat-history');
+            const loadingDiv = document.getElementById('chat-loading');
+            
+            // Загружаем историю из глобальной переменной при рендере
+            historyDiv.innerHTML += chatHistory.map(msg => createChatMessageHTML(msg.role, msg.text)).join('');
+            historyDiv.scrollTop = historyDiv.scrollHeight;
+
+            // Динамический ресайз textarea
+            input.addEventListener('input', () => {
+                input.style.height = 'auto';
+                input.style.height = (input.scrollHeight) + 'px';
+            });
+
+            // Отправка сообщения
+            sendBtn.addEventListener('click', processUserMessage);
+            input.addEventListener('keydown', (e) => {
+                if (e.key === 'Enter' && !e.shiftKey) {
+                    e.preventDefault();
+                    processUserMessage();
+                }
+            });
+
+            async function processUserMessage() {
+                const userQuery = input.value.trim();
+                if (!userQuery) return;
+
+                // 1. Добавить сообщение пользователя
+                const userMsg = { role: 'user', text: userQuery };
+                chatHistory.push(userMsg);
+                historyDiv.innerHTML += createChatMessageHTML(userMsg.role, userMsg.text);
+                historyDiv.scrollTop = historyDiv.scrollHeight;
+                
+                input.value = '';
+                input.style.height = 'auto'; // Сброс высоты
+                
+                // 2. Показать загрузку
+                loadingDiv.classList.remove('hidden');
+                sendBtn.disabled = true;
+                
+                // 3. Сформировать системный промпт
+                const userAge = userProfile.age;
+                const userTone = userAge <= 18 ? 'дружелюбный, восторженный, как для ребенка 10 лет, используй emoji.' : 'экспертный, сдержанный, как для профессионала.';
+                const systemPrompt = `Ты - Магический Наставник в закрытом клубе фокусников. Твой ответ должен быть на русском языке. Твой тон: ${userTone}. Отвечай только по теме магии, фокусов, реквизита, или истории иллюзии. Будь краток и по делу.`;
+                
+                // 4. Вызов LLM
+                const llmResponse = await callGeminiApi(userQuery, systemPrompt);
+                
+                // 5. Скрыть загрузку и добавить ответ Наставника
+                loadingDiv.classList.add('hidden');
+                sendBtn.disabled = false;
+
+                const mentorMsg = { role: 'mentor', text: llmResponse };
+                chatHistory.push(mentorMsg);
+                historyDiv.innerHTML += createChatMessageHTML(mentorMsg.role, mentorMsg.text);
+                historyDiv.scrollTop = historyDiv.scrollHeight;
+            }
+
+            function createChatMessageHTML(role, text) {
+                const isUser = role === 'user';
+                const bgColor = isUser ? 'bg-blue-500 text-white' : 'bg-green-500';
+                const alignClass = isUser ? 'justify-end' : 'justify-start';
+                
+                let style = '';
+                if (!isUser) {
+                    style = `style="background-color: var(--color-accent); color: var(--bg-primary);"`;
+                }
+
+                return `
+                    <div class="flex ${alignClass}">
+                        <div class="p-3 rounded-xl max-w-[80%] shadow-md ${bgColor}" ${style}>
+                            ${isUser ? '' : `<span class="font-bold">Наставник:</span> `}
+                            ${text.split('\n').map(line => `<p>${line}</p>`).join('')}
+                        </div>
+                    </div>
+                `;
+            }
+        }
+
 
         function renderLessons() {
             // Уникальные теги для фильтров
@@ -459,11 +564,11 @@
             return `
                 <h2 class="text-3xl font-bold text-accent mb-6">📚 Уроки Магии</h2>
                 <div id="filter-controls" class="card-bg p-4 rounded-xl shadow-lg mb-6 sticky top-20 z-10">
-                    <h3 class="font-semibold text-lg mb-3" style="color: var(--color-accent);">Фильтры и Сортировка</h3>
+                    <h3 class="font-semibold text-lg mb-3 text-accent">Фильтры и Сортировка</h3>
                     <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
                         <!-- Фильтр по сложности -->
                         <div>
-                            <label for="filter-difficulty" class="block text-sm font-medium text-gray-400 mb-1">Сложность</label>
+                            <label for="filter-difficulty" class="block text-sm font-medium text-color-subtle mb-1">Сложность</label>
                             <select id="filter-difficulty" class="w-full rounded-lg shadow-sm p-2 border">
                                 <option value="all">Все (Простой - Суперсложный)</option>
                                 <option value="1">1/5 (Простой)</option>
@@ -474,7 +579,7 @@
                         </div>
                         <!-- Фильтр по реквизиту -->
                         <div>
-                            <label for="filter-props" class="block text-sm font-medium text-gray-400 mb-1">Реквизит</label>
+                            <label for="filter-props" class="block text-sm font-medium text-color-subtle mb-1">Реквизит</label>
                             <select id="filter-props" class="w-full rounded-lg shadow-sm p-2 border">
                                 <option value="all">Весь реквизит</option>
                                 ${allProps.map(prop => `<option value="${prop}">${prop}</option>`).join('')}
@@ -482,7 +587,7 @@
                         </div>
                         <!-- Фильтр по тегам -->
                         <div>
-                            <label for="filter-tags" class="block text-sm font-medium text-gray-400 mb-1">Теги</label>
+                            <label for="filter-tags" class="block text-sm font-medium text-color-subtle mb-1">Теги</label>
                             <select id="filter-tags" class="w-full rounded-lg shadow-sm p-2 border">
                                 <option value="all">Все теги</option>
                                 ${allTags.map(tag => `<option value="${tag}">${tag}</option>`).join('')}
@@ -493,7 +598,7 @@
 
                 <div id="lessons-list" class="space-y-4">
                     <!-- Список уроков будет сгенерирован JS -->
-                    <p class="text-center text-gray-400 mt-8">Загрузка уроков...</p>
+                    <p class="text-center text-color-subtle mt-8">Загрузка уроков...</p>
                 </div>
             `;
         }
@@ -502,13 +607,13 @@
             return `
                 <div class="space-y-4">
                     <h2 class="text-3xl font-bold text-accent">🔴 Эфиры и Вебинары</h2>
-                    <p class="text-gray-400">Расписание ближайших прямых эфиров с профессиональными фокусниками.</p>
+                    <p class="text-color-subtle">Расписание ближайших прямых эфиров с профессиональными фокусниками.</p>
                     
                     <div class="card-bg p-4 rounded-xl shadow-lg">
                         <h3 class="text-xl font-semibold mb-2 text-red-500">Следующий Эфир!</h3>
                         <p class="text-lg font-bold" style="color: var(--color-text);">"Мастерство Кубиков" с Магом Игорем</p>
-                        <p class="text-sm text-gray-500">Четверг, 19:00 МСК (Тема недели: Кубики)</p>
-                        <button class="mt-3 bg-red-500 hover:bg-red-600 text-white py-2 px-4 rounded-lg text-sm font-medium">Смотреть Анонс</button>
+                        <p class="text-sm text-color-subtle">Четверг, 19:00 МСК (Тема недели: Кубики)</p>
+                        <button class="mt-3 bg-red-500 hover:bg-red-600 text-white py-2 px-4 rounded-lg text-sm font-medium transition duration-150">Смотреть Анонс</button>
                     </div>
                 </div>
             `;
@@ -518,19 +623,19 @@
             return `
                 <div class="space-y-4">
                     <h2 class="text-3xl font-bold text-accent">🗺️ Квесты и Приключения</h2>
-                    <p class="text-gray-400">Личное приключение для ${userProfile?.name || 'юного мага'}! Выберите квест и начните свой путь.</p>
+                    <p class="text-color-subtle">Личное приключение для ${userProfile?.name || 'юного мага'}! Выберите квест и начните свой путь.</p>
                     
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <!-- Квест 1: Визуальная новелла -->
                         <div class="card-bg p-4 rounded-xl shadow-lg border-4 border-yellow-400">
                             <h3 class="text-xl font-bold text-yellow-500">Тайна Заброшенной Шкатулки</h3>
-                            <p class="text-sm text-gray-400 mt-1">Текстово-визуальная новелла: разгадайте загадки старого фокусника.</p>
-                            <button class="btn-primary mt-3 bg-yellow-500 hover:bg-yellow-600 text-white py-2 px-4 rounded-lg text-sm font-medium" style="background-color: var(--color-accent); color: var(--bg-primary);">Начать приключение</button>
+                            <p class="text-sm text-color-subtle mt-1">Текстово-визуальная новелла: разгадайте загадки старого фокусника.</p>
+                            <button class="btn-primary mt-3 bg-yellow-500 hover:bg-yellow-600 text-white py-2 px-4 rounded-lg text-sm font-medium">Начать приключение</button>
                         </div>
                         <!-- Квест 2: Логика/Пазл -->
                         <div class="card-bg p-4 rounded-xl shadow-lg">
                             <h3 class="text-xl font-bold text-blue-500">Лабиринт Зеркал</h3>
-                            <p class="text-sm text-gray-400 mt-1">Серия логических пазлов, проверяющих ваше внимание и ловкость.</p>
+                            <p class="text-sm text-color-subtle mt-1">Серия логических пазлов, проверяющих ваше внимание и ловкость.</p>
                             <button class="btn-primary mt-3 bg-blue-500 hover:bg-blue-600 text-white py-2 px-4 rounded-lg text-sm font-medium">Старт</button>
                         </div>
                     </div>
@@ -542,11 +647,11 @@
             return `
                 <div class="space-y-4">
                     <h2 class="text-3xl font-bold text-accent">💰 Коммерческая История (Как Зарабатывать)</h2>
-                    <p class="text-gray-400">Секретный раздел: как монетизировать свои навыки фокусника. (Раздел дорабатывается)</p>
+                    <p class="text-color-subtle">Секретный раздел: как монетизировать свои навыки фокусника. (Раздел дорабатывается)</p>
                     
                     <div class="card-bg p-4 rounded-xl shadow-lg border-l-4 border-green-500">
                         <h3 class="text-xl font-semibold mb-2 text-green-500">Начальный Уровень</h3>
-                        <ul class="list-disc list-inside text-gray-400 text-sm space-y-1">
+                        <ul class="list-disc list-inside text-color-subtle text-sm space-y-1">
                             <li>Оформление своего первого шоу.</li>
                             <li>Ценообразование для дня рождения.</li>
                             <li>10 советов по продаже трюка.</li>
@@ -566,19 +671,19 @@
                     <div class="card-bg p-6 rounded-xl shadow-lg">
                         <h3 class="text-xl font-bold text-accent mb-4">${p.name}</h3>
                         <div class="grid grid-cols-2 gap-y-2 text-sm">
-                            <div class="font-medium text-gray-500">Возраст:</div>
+                            <div class="font-medium text-color-subtle">Возраст:</div>
                             <div class="font-semibold" style="color: var(--color-text);">${p.age}</div>
                             
-                            <div class="font-medium text-gray-500">Пол:</div>
+                            <div class="font-medium text-color-subtle">Пол:</div>
                             <div class="font-semibold" style="color: var(--color-text);">${p.gender === 'male' ? 'Мужской' : (p.gender === 'female' ? 'Женский' : 'Не указан')}</div>
 
-                            <div class="font-medium text-gray-500">Город:</div>
+                            <div class="font-medium text-color-subtle">Город:</div>
                             <div class="font-semibold" style="color: var(--color-text);">${p.city}</div>
 
-                            <div class="font-medium text-gray-500">Telegram ID:</div>
+                            <div class="font-medium text-color-subtle">Telegram ID:</div>
                             <div class="font-semibold break-all" style="color: var(--color-text);">${tgId}</div>
                             
-                            <div class="font-medium text-gray-500">UID (для Firestore):</div>
+                            <div class="font-medium text-color-subtle">UID (для Firestore):</div>
                             <div class="font-semibold break-all" style="color: var(--color-text);">${userId}</div>
                         </div>
                     </div>
@@ -596,15 +701,12 @@
             const lessonList = document.getElementById('lessons-list');
 
             let filteredLessons = allLessons.filter(lesson => {
-                // Фильтр по сложности
                 if (difficultyFilter !== 'all' && lesson.difficulty !== parseInt(difficultyFilter)) {
                     return false;
                 }
-                // Фильтр по реквизиту
                 if (propsFilter !== 'all' && lesson.props !== propsFilter) {
                     return false;
                 }
-                // Фильтр по тегам
                 if (tagsFilter !== 'all' && !lesson.tags.includes(tagsFilter)) {
                     return false;
                 }
@@ -612,7 +714,7 @@
             });
 
             if (filteredLessons.length === 0) {
-                lessonList.innerHTML = `<p class="text-center text-xl text-gray-500 mt-10 p-4 card-bg rounded-lg shadow-md">Нет уроков, соответствующих выбранным фильтрам. Попробуйте изменить настройки.</p>`;
+                lessonList.innerHTML = `<p class="text-center text-xl text-color-subtle mt-10 p-4 card-bg rounded-lg shadow-md">Нет уроков, соответствующих выбранным фильтрам. Попробуйте изменить настройки.</p>`;
                 return;
             }
 
@@ -621,10 +723,10 @@
                 <div class="lesson-card card-bg p-5 rounded-xl shadow-md flex justify-between items-center transition duration-200 hover:shadow-lg">
                     <div>
                         <h4 class="text-xl font-bold text-accent">${lesson.title}</h4>
-                        <p class="text-sm text-gray-500 mt-1">Реквизит: <span class="font-semibold">${lesson.props}</span> | Сложность: ${lesson.difficulty}/5</p>
+                        <p class="text-sm text-color-subtle mt-1">Реквизит: <span class="font-semibold">${lesson.props}</span> | Сложность: ${lesson.difficulty}/5</p>
                         <div class="mt-2 flex flex-wrap gap-2">
-                            <span class="px-2 py-0.5 text-xs font-medium rounded-full" style="background-color: var(--bg-secondary); color: var(--color-text);">${lesson.props}</span>
-                            ${lesson.tags.map(tag => `<span class="px-2 py-0.5 text-xs font-medium rounded-full" style="background-color: #3b82f6; color: white;">${tag}</span>`).join('')}
+                            <span class="px-2 py-0.5 text-xs font-medium rounded-full" style="background-color: var(--color-accent); color: var(--bg-primary);">${lesson.props}</span>
+                            ${lesson.tags.map(tag => `<span class="px-2 py-0.5 text-xs font-medium rounded-full" style="background-color: var(--bg-primary); color: var(--color-text); border: 1px solid var(--color-accent);">${tag}</span>`).join('')}
                         </div>
                     </div>
                     
@@ -633,16 +735,16 @@
                         <div class="flex items-center space-x-1 mb-2">
                             <span class="text-yellow-500 text-xl">⭐</span>
                             <span class="font-bold text-lg" style="color: var(--color-text);">${lesson.rating.toFixed(1)}</span>
-                            <span class="text-xs text-gray-400">(${lesson.ratedBy})</span>
+                            <span class="text-xs text-color-subtle">(${lesson.ratedBy})</span>
                         </div>
                         <div data-lesson-id="${lesson.id}" class="rating-controls space-y-1">
-                            <button class="w-full bg-green-500 hover:bg-green-600 text-white text-xs py-1 px-2 rounded-lg font-medium shadow-sm" data-action="success">
+                            <button class="w-full bg-green-500 hover:bg-green-600 text-white text-xs py-1 px-2 rounded-lg font-medium shadow-sm transition duration-150" data-action="success">
                                 Получилось! ✅
                             </button>
                             <!-- Упрощенная оценка легкости 1-5 -->
                             <div class="flex space-x-1 justify-end">
-                                <span class="text-xs text-gray-500 mr-1">Легкость (1-5):</span>
-                                <select class="bg-gray-50 border border-gray-300 rounded-md text-xs p-0.5" data-action="ease" style="background-color: var(--bg-secondary); border-color: var(--color-accent);">
+                                <span class="text-xs text-color-subtle mr-1">Легкость (1-5):</span>
+                                <select class="bg-gray-50 border border-gray-300 rounded-md text-xs p-0.5" data-action="ease" style="background-color: var(--bg-primary); border-color: var(--color-accent); color: var(--color-text);">
                                     <option value="0" selected disabled>Оценить</option>
                                     <option value="1">1</option>
                                     <option value="2">2</option>
@@ -669,17 +771,14 @@
                 let message = `Оценка для урока ID ${lessonId}: `;
 
                 if (action === 'success' && button) {
-                    // Симуляция отправки данных
                     message += "Получилось! (Успешно отправлено)";
                     button.disabled = true;
                     button.textContent = 'Оценено! 👍';
                 } else if (action === 'ease' && select && select.value !== '0') {
-                    // Симуляция отправки данных
                     message += `Легкость ${select.value}/5 (Успешно отправлено)`;
                     select.disabled = true;
                 }
                 
-                // В реальном приложении здесь будет вызов функции setDoc для обновления рейтинга в Firestore
                 console.log(message);
             }
         }
@@ -687,10 +786,8 @@
 
         // --- Инициализация и обработчики событий ---
         document.addEventListener('DOMContentLoaded', () => {
-            // Инициализация Firebase и проверка профиля
             initFirebase();
 
-            // Обработчики для навигационных кнопок
             document.querySelectorAll('.nav-button').forEach(button => {
                 button.addEventListener('click', (e) => {
                     const section = e.currentTarget.dataset.section;
@@ -698,8 +795,7 @@
                 });
             });
             
-            // Загрузить стартовый раздел (будет переопределено после проверки профиля)
-            contentDiv.innerHTML = `<div class="text-center mt-20"><div class="animate-spin rounded-full h-10 w-10 border-b-2 border-indigo-500 mx-auto"></div><p class="mt-4 text-gray-500">Загрузка клуба...</p></div>`;
+            contentDiv.innerHTML = `<div class="text-center mt-20"><div class="animate-spin rounded-full h-10 w-10 border-b-2 border-accent mx-auto" style="border-color: var(--color-accent) transparent var(--color-accent) transparent;"></div><p class="mt-4 text-color-subtle">Загрузка клуба...</p></div>`;
         });
     </script>
 
