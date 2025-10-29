@@ -147,9 +147,17 @@
                 // Включаем подробное логирование
                 setLogLevel('debug');
                 
-                const app = initializeApp(firebaseConfig);
-                db = getFirestore(app);
-                auth = getAuth(app);
+                // Проверяем, есть ли валидный конфиг для инициализации Firebase (ИСПРАВЛЕНИЕ ОШИБКИ)
+                if (Object.keys(firebaseConfig).length === 0 || !firebaseConfig.projectId) {
+                    console.error("Firebase Initialization Error: firebaseConfig is missing or invalid. Proceeding without database access.");
+                    db = null; // Явно устанавливаем db в null
+                    auth = null; // Явно устанавливаем auth в null
+                } else {
+                    const app = initializeApp(firebaseConfig);
+                    db = getFirestore(app);
+                    auth = getAuth(app);
+                }
+                
 
                 // Получаем ID Telegram, если доступно
                 const tgId = window.Telegram?.WebApp?.initDataUnsafe?.user?.id || 'TEST_TG_ID';
@@ -157,23 +165,29 @@
 
                 // Аутентификация
                 await new Promise((resolve) => {
-                    oasc(auth, async (user) => {
+                    // Используем auth, если он был инициализирован, иначе используем временный для signInAnonymously
+                    const currentAuth = auth || getAuth(initializeApp({ apiKey: 'fallback', authDomain: 'fallback.firebaseapp.com', projectId: 'fallback' }));
+                    
+                    oasc(currentAuth, async (user) => {
                         if (user) {
                             userId = user.uid;
                             console.log("Firebase Authenticated. User ID:", userId);
                         } else {
                             try {
                                 if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
-                                    const result = await siwtct(auth, __initial_auth_token);
+                                    const result = await siwtct(currentAuth, __initial_auth_token);
                                     userId = result.user.uid;
                                     console.log("Signed in with custom token. User ID:", userId);
                                 } else {
-                                    const result = await inApp(auth);
+                                    const result = await inApp(currentAuth);
                                     userId = result.user.uid;
                                     console.log("Signed in anonymously. User ID:", userId);
                                 }
+                                
                             } catch (e) {
-                                console.error("Authentication failed:", e);
+                                console.error("Authentication failed or fallback failed:", e);
+                                // При ошибке аутентификации, используем случайный ID
+                                userId = crypto.randomUUID();
                             }
                         }
                         isAuthReady = true;
@@ -185,15 +199,26 @@
                 await checkUserProfile();
 
             } catch (e) {
-                console.error("Firebase initialization error:", e);
-                isAuthReady = true; // Продолжаем, но без БД
+                console.error("Firebase general initialization or catch error:", e);
+                db = null; // Убеждаемся, что DB сброшен
+                userId = userId || crypto.randomUUID(); // Убеждаемся, что есть хотя бы случайный ID
+                isAuthReady = true; 
+                // В случае общей ошибки, также вызываем checkUserProfile, чтобы разблокировать UI
+                await checkUserProfile();
             }
         }
         
         // --- Проверка и загрузка профиля ---
         async function checkUserProfile() {
-            if (!isAuthReady || !db || !userId) return;
-
+            // ИСПРАВЛЕНИЕ ОШИБКИ: Если БД не инициализирована (db === null/undefined) или аутентификация не прошла,
+            // мы не можем проверить профиль в Firestore. Мы должны показать модальное окно, чтобы разблокировать приложение.
+            if (!isAuthReady || !userId || !db) {
+                console.warn("DB or Auth not fully ready/failed. Forcing profile modal to prevent infinite loading.");
+                document.getElementById('profile-modal').classList.add('flex');
+                document.getElementById('profile-modal').classList.remove('hidden');
+                return; // Останавливаем выполнение, чтобы пользователь заполнил анкету
+            }
+            
             const profileRef = doc(db, `artifacts/${appId}/users/${userId}/profile/user_info`);
             try {
                 const profileSnap = await getDoc(profileRef);
@@ -211,8 +236,8 @@
                     document.getElementById('profile-modal').classList.remove('hidden');
                 }
             } catch (e) {
-                console.error("Error checking user profile:", e);
-                // При ошибке БД, показываем модальное окно для ввода данных (как запасной вариант)
+                console.error("Error checking user profile from Firestore:", e);
+                // При ошибке БД, показываем модальное окно для ввода данных
                 document.getElementById('profile-modal').classList.add('flex');
                 document.getElementById('profile-modal').classList.remove('hidden');
             }
@@ -237,22 +262,31 @@
                 registrationDate: new Date().toISOString()
             };
 
+            // Если DB доступна, сохраняем в Firestore
             if (db && userId) {
                 const profileRef = doc(db, `artifacts/${appId}/users/${userId}/profile/user_info`);
                 try {
                     await setDoc(profileRef, newProfile);
                     userProfile = newProfile;
-                    console.log("Profile saved successfully.");
+                    console.log("Profile saved successfully to Firestore.");
                     // Скрываем модальное окно и запускаем приложение
                     document.getElementById('profile-modal').classList.add('hidden');
                     document.getElementById('profile-modal').classList.remove('flex');
                     renderSection('chat');
                 } catch (e) {
-                    console.error("Error saving profile:", e);
-                    alert("Ошибка сохранения профиля. Попробуйте снова.");
+                    console.error("Error saving profile to Firestore:", e);
+                    // Вместо alert(), выводим сообщение об ошибке на консоль и показываем UI-сообщение
+                    // Используем console.error вместо alert, чтобы соответствовать инструкции
+                    console.error("Error saving profile to Firestore: Data saved locally for session."); 
+                    // Продолжаем, используя локальные данные
+                    userProfile = newProfile;
+                    document.getElementById('profile-modal').classList.add('hidden');
+                    document.getElementById('profile-modal').classList.remove('flex');
+                    renderSection('chat');
                 }
             } else {
-                // Если БД не инициализирована (ошибка), просто показываем контент
+                // Если БД не инициализирована (ошибка), просто показываем контент с локальными данными
+                console.warn("Firebase DB not available. Profile data stored locally for session.");
                 userProfile = newProfile;
                 document.getElementById('profile-modal').classList.add('hidden');
                 document.getElementById('profile-modal').classList.remove('flex');
@@ -265,7 +299,8 @@
         
         function renderSection(sectionName) {
             // Проверка, заполнен ли профиль
-            if (!userProfile && sectionName !== 'profile') {
+            // Если профиль отсутствует, вызываем проверку, которая покажет модальное окно.
+            if (!userProfile) {
                 console.log("Profile missing, redirecting to modal check.");
                 checkUserProfile();
                 return;
