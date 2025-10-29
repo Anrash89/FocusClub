@@ -14,7 +14,7 @@
             transition: background-color 0.4s, color 0.4s;
         }
 
-        /* --- ВЗРОСЛАЯ ТЕМА (Mystical Gold) --- */
+        /* --- ВЗРОСЛАЯ ТЕМА (Mystical Gold - Без изменений) --- */
         .adult-theme {
             --bg-primary: #1f2937; /* Dark Slate - Header/Cards */
             --bg-secondary: #111827; /* Darker Slate/Near Black - Body */
@@ -22,6 +22,11 @@
             --color-text: #f3f4f6; /* Light Text */
             --color-subtle: #9ca3af; /* Gray-400 */
             --shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
+            /* Чат Наставника */
+            --chat-mentor-bg: #fffbe9; /* Creamy Yellow */
+            --chat-mentor-text: #1f2937; /* Dark Text */
+            --chat-user-bg: #3b82f6; /* Blue for user messages */
+            --chat-user-text: #ffffff;
         }
 
         body.adult-theme {
@@ -39,31 +44,36 @@
         .adult-theme .btn-primary:hover { background-color: #d97706; }
         .adult-theme input, .adult-theme select, .adult-theme textarea { background-color: #374151; border-color: #4b5563; color: var(--color-text); }
         
-        /* --- ДЕТСКАЯ ТЕМА (Playful Amethyst) --- */
+        /* --- ДЕТСКАЯ ТЕМА (Clean Blue/White/Black) --- */
         .child-theme {
-            --bg-primary: #60a5fa; /* Blue-400 - Header/Accent */
-            --bg-secondary: #ffffff; /* White/Light Background - Body/Cards */
-            --color-accent: #a855f7; /* Amethyst Purple - Main Accent */
+            --bg-primary: #ffffff; /* White - Header/Cards/Body */
+            --bg-secondary: #f3f4f6; /* Light Gray - Main Background */
+            --color-accent: #3b82f6; /* Blue-500 - Main Accent */
             --color-text: #111827; /* Dark Text */
             --color-subtle: #4b5563; /* Gray-600 */
-            --shadow: 0 4px 10px rgba(96, 165, 250, 0.4); /* Blue Shadow */
+            --shadow: 0 2px 8px rgba(0, 0, 0, 0.1); /* Subtle Shadow */
+            /* Чат Наставника */
+            --chat-mentor-bg: #e0f2fe; /* Light Blue (Blue-50) */
+            --chat-mentor-text: #111827; /* Dark Text */
+            --chat-user-bg: #3b82f6; /* Accent Blue for user messages */
+            --chat-user-text: #ffffff;
         }
 
         body.child-theme {
-            background-color: #f3f4f6;
+            background-color: var(--bg-secondary);
             color: var(--color-text);
         }
         
         /* Специальные классы для детской темы */
-        .child-theme .main-header { background-color: var(--bg-primary); box-shadow: var(--shadow); }
-        .child-theme .card-bg { background-color: var(--bg-secondary); border: 1px solid #e5e7eb; border-radius: 1.5rem; }
+        .child-theme .main-header { background-color: var(--bg-primary); box-shadow: var(--shadow); border-bottom: 1px solid #e5e7eb; }
+        .child-theme .card-bg { background-color: var(--bg-primary); border: 1px solid #e5e7eb; border-radius: 1.5rem; }
         .child-theme .text-accent { color: var(--color-accent); }
         .child-theme .nav-bg { background-color: white; border-top: 1px solid #d1d5db; }
         .child-theme .nav-button { color: var(--color-subtle); }
         .child-theme .nav-button.active-nav { color: var(--color-accent); }
-        .child-theme .btn-primary { background-color: #3b82f6; /* Blue-500 */ color: white; font-weight: 800; border-radius: 0.75rem; }
+        .child-theme .btn-primary { background-color: var(--color-accent); color: white; font-weight: 800; border-radius: 0.75rem; }
         .child-theme .btn-primary:hover { background-color: #2563eb; }
-        .child-theme input, .child-theme select, .child-theme textarea { background-color: #f9fafb; border-color: #d1d5db; color: var(--color-text); border-radius: 0.75rem; }
+        .child-theme input, .child-theme select, .child-theme textarea { background-color: #ffffff; border-color: #d1d5db; color: var(--color-text); border-radius: 0.75rem; }
 
         /* --- АНИМАЦИИ И ПЕРЕХОДЫ --- */
         .card-bg, .btn-primary, .nav-button { transition: all 0.3s ease-in-out; }
@@ -72,8 +82,8 @@
             box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15);
         }
         .child-theme .lesson-card:hover {
-            transform: rotate(0.5deg) scale(1.015); /* Легкий наклон */
-            box-shadow: 0 8px 15px rgba(168, 85, 247, 0.3); /* Фиолетовая тень */
+            transform: scale(1.01); 
+            box-shadow: 0 6px 12px rgba(59, 130, 246, 0.3); /* Синяя тень */
         }
         .adult-theme .lesson-card:hover {
             box-shadow: 0 10px 20px rgba(245, 158, 11, 0.3); /* Золотая тень */
@@ -227,13 +237,14 @@
                     });
 
                     if (!response.ok) {
+                        const errorMsg = `API call failed with status: ${response.status} (Forbidden? Check API Key/Permissions).`;
                         if (response.status === 429 && i < maxRetries - 1) {
                             const delay = Math.pow(2, i) * 1000;
                             console.warn(`Rate limit exceeded (429). Retrying in ${delay / 1000}s...`);
                             await new Promise(resolve => setTimeout(resolve, delay));
                             continue;
                         }
-                        throw new Error(`API call failed with status: ${response.status}`);
+                        throw new Error(errorMsg);
                     }
 
                     const result = await response.json();
@@ -243,7 +254,7 @@
                 } catch (error) {
                     console.error("Gemini API Error:", error);
                     if (i === maxRetries - 1) {
-                        return "Произошла критическая ошибка при обращении к Магическому Наставнику.";
+                        return "Произошла ошибка API. Проверьте настройки ключа.";
                     }
                     const delay = Math.pow(2, i) * 1000;
                     console.warn(`API error. Retrying in ${delay / 1000}s...`);
@@ -449,7 +460,7 @@
                         <div id="chat-history" class="flex-grow overflow-y-auto p-2 space-y-4 mb-4">
                             <!-- Приветственное сообщение Наставника -->
                             <div class="flex justify-start">
-                                <div class="bg-blue-600 text-white p-3 rounded-xl max-w-[80%] shadow-md" style="background-color: var(--color-accent); color: var(--bg-primary); border-top-left-radius: 0;">
+                                <div class="p-3 rounded-xl max-w-[80%] shadow-md" style="background-color: var(--chat-mentor-bg); color: var(--chat-mentor-text); border-top-left-radius: 0;">
                                     <span class="font-bold">Наставник:</span> ${userProfile.age <= 18 ? 
                                         'Привет, юный маг! Я твой наставник. Спрашивай о чем угодно, связанном с фокусами! Готов начать твое волшебное путешествие?' : 
                                         'Приветствую, Мастер. Я — ваш персональный наставник по магии. Как я могу помочь в вашем следующем великом представлении?'}
@@ -536,10 +547,10 @@
 
             function createChatMessageHTML(role, text) {
                 const isUser = role === 'user';
-                const accentColor = getComputedStyle(document.body).getPropertyValue('--color-accent').trim();
-                const primaryColor = getComputedStyle(document.body).getPropertyValue('--bg-primary').trim();
+                const bgColor = isUser ? 'var(--chat-user-bg)' : 'var(--chat-mentor-bg)';
+                const textColor = isUser ? 'var(--chat-user-text)' : 'var(--chat-mentor-text)';
                 
-                const style = isUser ? `background-color: #3b82f6; color: white; border-top-right-radius: 0;` : `background-color: ${accentColor}; color: ${primaryColor}; border-top-left-radius: 0;`;
+                const style = `background-color: ${bgColor}; color: ${textColor}; border-top-${isUser ? 'right' : 'left'}-radius: 0;`;
                 const alignClass = isUser ? 'justify-end' : 'justify-start';
 
                 return `
