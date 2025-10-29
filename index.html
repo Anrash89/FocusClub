@@ -14,11 +14,11 @@
             transition: background-color 0.4s, color 0.4s;
         }
 
-        /* --- ВЗРОСЛАЯ ТЕМА (Mystical Emerald) --- */
+        /* --- ВЗРОСЛАЯ ТЕМА (Mystical Gold) --- */
         .adult-theme {
             --bg-primary: #1f2937; /* Dark Slate - Header/Cards */
             --bg-secondary: #111827; /* Darker Slate/Near Black - Body */
-            --color-accent: #34d399; /* Emerald Green - Accent */
+            --color-accent: #f59e0b; /* Amber/Gold - Accent */
             --color-text: #f3f4f6; /* Light Text */
             --color-subtle: #9ca3af; /* Gray-400 */
             --shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
@@ -36,14 +36,14 @@
         .adult-theme .nav-button { color: var(--color-subtle); }
         .adult-theme .nav-button.active-nav { color: var(--color-accent); }
         .adult-theme .btn-primary { background-color: var(--color-accent); color: var(--bg-primary); font-weight: 700; }
-        .adult-theme .btn-primary:hover { background-color: #10b981; }
+        .adult-theme .btn-primary:hover { background-color: #d97706; }
         .adult-theme input, .adult-theme select, .adult-theme textarea { background-color: #374151; border-color: #4b5563; color: var(--color-text); }
         
-        /* --- ДЕТСКАЯ ТЕМА (Playful Azure) --- */
+        /* --- ДЕТСКАЯ ТЕМА (Playful Amethyst) --- */
         .child-theme {
             --bg-primary: #60a5fa; /* Blue-400 - Header/Accent */
             --bg-secondary: #ffffff; /* White/Light Background - Body/Cards */
-            --color-accent: #f97316; /* Orange-500 - Main Accent */
+            --color-accent: #a855f7; /* Amethyst Purple - Main Accent */
             --color-text: #111827; /* Dark Text */
             --color-subtle: #4b5563; /* Gray-600 */
             --shadow: 0 4px 10px rgba(96, 165, 250, 0.4); /* Blue Shadow */
@@ -72,11 +72,11 @@
             box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15);
         }
         .child-theme .lesson-card:hover {
-            transform: rotate(1deg) scale(1.02); /* Легкий наклон */
-            box-shadow: 0 8px 15px rgba(249, 115, 22, 0.3); /* Оранжевая тень */
+            transform: rotate(0.5deg) scale(1.015); /* Легкий наклон */
+            box-shadow: 0 8px 15px rgba(168, 85, 247, 0.3); /* Фиолетовая тень */
         }
         .adult-theme .lesson-card:hover {
-            box-shadow: 0 10px 20px rgba(52, 211, 153, 0.3); /* Изумрудная тень */
+            box-shadow: 0 10px 20px rgba(245, 158, 11, 0.3); /* Золотая тень */
         }
     </style>
 </head>
@@ -449,7 +449,7 @@
                         <div id="chat-history" class="flex-grow overflow-y-auto p-2 space-y-4 mb-4">
                             <!-- Приветственное сообщение Наставника -->
                             <div class="flex justify-start">
-                                <div class="bg-blue-600 text-white p-3 rounded-t-xl rounded-br-xl max-w-[80%] shadow-md" style="background-color: var(--color-accent); color: var(--bg-primary);">
+                                <div class="bg-blue-600 text-white p-3 rounded-xl max-w-[80%] shadow-md" style="background-color: var(--color-accent); color: var(--bg-primary); border-top-left-radius: 0;">
                                     <span class="font-bold">Наставник:</span> ${userProfile.age <= 18 ? 
                                         'Привет, юный маг! Я твой наставник. Спрашивай о чем угодно, связанном с фокусами! Готов начать твое волшебное путешествие?' : 
                                         'Приветствую, Мастер. Я — ваш персональный наставник по магии. Как я могу помочь в вашем следующем великом представлении?'}
@@ -466,7 +466,7 @@
                         </div>
 
                         <div id="chat-loading" class="text-center mt-2 text-sm text-color-subtle hidden">
-                            <div class="animate-spin inline-block h-4 w-4 rounded-full border-b-2 border-accent mr-2"></div>
+                            <div class="animate-spin inline-block h-4 w-4 rounded-full border-b-2 border-accent mr-2" style="border-color: var(--color-accent) transparent var(--color-accent) transparent;"></div>
                             Наставник думает...
                         </div>
                     </div>
@@ -536,17 +536,15 @@
 
             function createChatMessageHTML(role, text) {
                 const isUser = role === 'user';
-                const bgColor = isUser ? 'bg-blue-500 text-white' : 'bg-green-500';
-                const alignClass = isUser ? 'justify-end' : 'justify-start';
+                const accentColor = getComputedStyle(document.body).getPropertyValue('--color-accent').trim();
+                const primaryColor = getComputedStyle(document.body).getPropertyValue('--bg-primary').trim();
                 
-                let style = '';
-                if (!isUser) {
-                    style = `style="background-color: var(--color-accent); color: var(--bg-primary);"`;
-                }
+                const style = isUser ? `background-color: #3b82f6; color: white; border-top-right-radius: 0;` : `background-color: ${accentColor}; color: ${primaryColor}; border-top-left-radius: 0;`;
+                const alignClass = isUser ? 'justify-end' : 'justify-start';
 
                 return `
                     <div class="flex ${alignClass}">
-                        <div class="p-3 rounded-xl max-w-[80%] shadow-md ${bgColor}" ${style}>
+                        <div class="p-3 rounded-xl max-w-[80%] shadow-md" style="${style}">
                             ${isUser ? '' : `<span class="font-bold">Наставник:</span> `}
                             ${text.split('\n').map(line => `<p>${line}</p>`).join('')}
                         </div>
