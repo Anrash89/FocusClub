@@ -1,0 +1,591 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Закрытый Клуб Фокусников</title>
+    <!-- Подключение Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Конфигурация шрифта -->
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap');
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f7f7f7;
+            color: #1f2937;
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col">
+
+    <!-- Загрузка Firebase и инициализация -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { getAuth, signInAnonymously, signInWithCustomToken, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getFirestore, doc, getDoc, setDoc, setLogLevel } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+
+        // Глобальные переменные для доступа в скрипте ниже
+        window.initializeApp = initializeApp;
+        window.getAuth = getAuth;
+        window.inApp = signInAnonymously;
+        window.siwtct = signInWithCustomToken;
+        window.oasc = onAuthStateChanged;
+        window.getFirestore = getFirestore;
+        window.doc = doc;
+        window.getDoc = getDoc;
+        window.setDoc = setDoc;
+        window.setLogLevel = setLogLevel;
+    </script>
+
+    <!-- Основной контейнер приложения -->
+    <div id="app" class="flex flex-col flex-grow">
+        <!-- Заголовок и текущая неделя -->
+        <header class="bg-indigo-600 text-white p-4 shadow-lg sticky top-0 z-10">
+            <div class="container mx-auto flex justify-between items-center">
+                <h1 class="text-2xl font-extrabold tracking-tight">🪄 Club Magic</h1>
+                <div id="weekly-theme" class="bg-indigo-700 py-1 px-3 rounded-full text-sm font-medium shadow-md">
+                    Неделя Реквизита: Карты 🃏
+                </div>
+            </div>
+        </header>
+
+        <!-- Основной контент (переключается в зависимости от раздела) -->
+        <main id="content" class="container mx-auto p-4 flex-grow">
+            <!-- Здесь будет загружаться контент разделов -->
+        </main>
+
+        <!-- Главное меню навигации (4-5 разделов) -->
+        <nav class="bg-white border-t border-gray-200 fixed bottom-0 left-0 right-0 z-20 shadow-xl md:static">
+            <div class="container mx-auto flex justify-around items-center h-16">
+                <button data-section="chat" class="nav-button flex flex-col items-center p-2 text-indigo-600 font-semibold active-nav">
+                    <span class="text-xl">💬</span>
+                    <span class="text-xs">Чат</span>
+                </button>
+                <button data-section="lessons" class="nav-button flex flex-col items-center p-2 text-gray-500">
+                    <span class="text-xl">📚</span>
+                    <span class="text-xs">Уроки</span>
+                </button>
+                <button data-section="live" class="nav-button flex flex-col items-center p-2 text-gray-500">
+                    <span class="text-xl">🔴</span>
+                    <span class="text-xs">Эфиры</span>
+                </button>
+                <button data-section="quests" class="nav-button flex flex-col items-center p-2 text-gray-500">
+                    <span class="text-xl">🗺️</span>
+                    <span class="text-xs">Квесты</span>
+                </button>
+                <button data-section="commerce" class="nav-button flex flex-col items-center p-2 text-gray-500">
+                    <span class="text-xl">💰</span>
+                    <span class="text-xs">Заработок</span>
+                </button>
+                <button data-section="profile" class="nav-button flex flex-col items-center p-2 text-gray-500">
+                    <span class="text-xl">👤</span>
+                    <span class="text-xs">Профиль</span>
+                </button>
+            </div>
+        </nav>
+    </div>
+
+    <!-- Модальное окно "Анкета участника" (По умолчанию скрыто) -->
+    <div id="profile-modal" class="fixed inset-0 bg-black bg-opacity-75 z-50 hidden items-center justify-center p-4">
+        <div class="bg-white rounded-xl shadow-2xl p-6 w-full max-w-md transform transition-all">
+            <h2 class="text-3xl font-bold text-indigo-700 mb-4">Добро пожаловать в Клуб!</h2>
+            <p class="text-gray-600 mb-6">Пожалуйста, заполните анкету, чтобы получить доступ к урокам.</p>
+            <form id="profile-form">
+                <div class="mb-4">
+                    <label for="p-name" class="block text-sm font-medium text-gray-700">Имя</label>
+                    <input type="text" id="p-name" required class="mt-1 block w-full rounded-lg border-gray-300 shadow-sm focus:border-indigo-500 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 p-2 border">
+                </div>
+                <div class="grid grid-cols-2 gap-4 mb-4">
+                    <div>
+                        <label for="p-age" class="block text-sm font-medium text-gray-700">Возраст</label>
+                        <input type="number" id="p-age" required min="5" max="99" class="mt-1 block w-full rounded-lg border-gray-300 shadow-sm focus:border-indigo-500 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 p-2 border">
+                    </div>
+                    <div>
+                        <label for="p-gender" class="block text-sm font-medium text-gray-700">Пол</label>
+                        <select id="p-gender" required class="mt-1 block w-full rounded-lg border-gray-300 shadow-sm focus:border-indigo-500 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 p-2 border">
+                            <option value="">Выберите</option>
+                            <option value="male">Мальчик</option>
+                            <option value="female">Девочка</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="mb-6">
+                    <label for="p-city" class="block text-sm font-medium text-gray-700">Город</label>
+                    <input type="text" id="p-city" required class="mt-1 block w-full rounded-lg border-gray-300 shadow-sm focus:border-indigo-500 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 p-2 border">
+                </div>
+                <button type="submit" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 rounded-lg shadow-lg transition duration-150 ease-in-out">
+                    Получить Доступ!
+                </button>
+                <p id="tg-id-info" class="text-center text-xs text-gray-400 mt-3"></p>
+            </form>
+        </div>
+    </div>
+
+
+    <script>
+        // Инициализация глобальных переменных для работы с Firebase
+        let db, auth, userId;
+        let isAuthReady = false;
+        const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
+        const firebaseConfig = typeof __firebase_config !== 'undefined' ? JSON.parse(__firebase_config) : {};
+
+        // Базовые данные уроков (для демонстрации фильтров)
+        const allLessons = [
+            { id: 1, title: "Легкое исчезновение монеты", props: "Монеты", difficulty: 1, tags: ["Основы", "Монеты"], rating: 4.8, ratedBy: 120 },
+            { id: 2, title: "Смена карт на руке", props: "Карты", difficulty: 2, tags: ["Слейт", "Карты"], rating: 4.1, ratedBy: 85 },
+            { id: 3, title: "Узел на веревке за секунду", props: "Веревки", difficulty: 3, tags: ["Сложно", "Веревки"], rating: 3.5, ratedBy: 50 },
+            { id: 4, title: "Чтение мыслей (мен. трюк)", props: "Ментализм", difficulty: 4, tags: ["Суперсложно", "Психология"], rating: 2.9, ratedBy: 25 },
+            { id: 5, title: "Телепортация кубиков", props: "Кубики", difficulty: 2, tags: ["Слейт", "Кубики"], rating: 4.5, ratedBy: 105 },
+        ];
+        
+        // Переменная для хранения профиля
+        let userProfile = null;
+
+        // --- Firebase Инициализация и Аутентификация ---
+        async function initFirebase() {
+            try {
+                // Включаем подробное логирование
+                setLogLevel('debug');
+                
+                const app = initializeApp(firebaseConfig);
+                db = getFirestore(app);
+                auth = getAuth(app);
+
+                // Получаем ID Telegram, если доступно
+                const tgId = window.Telegram?.WebApp?.initDataUnsafe?.user?.id || 'TEST_TG_ID';
+                document.getElementById('tg-id-info').textContent = `Привязка к Telegram ID: ${tgId}`;
+
+                // Аутентификация
+                await new Promise((resolve) => {
+                    oasc(auth, async (user) => {
+                        if (user) {
+                            userId = user.uid;
+                            console.log("Firebase Authenticated. User ID:", userId);
+                        } else {
+                            try {
+                                if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
+                                    const result = await siwtct(auth, __initial_auth_token);
+                                    userId = result.user.uid;
+                                    console.log("Signed in with custom token. User ID:", userId);
+                                } else {
+                                    const result = await inApp(auth);
+                                    userId = result.user.uid;
+                                    console.log("Signed in anonymously. User ID:", userId);
+                                }
+                            } catch (e) {
+                                console.error("Authentication failed:", e);
+                            }
+                        }
+                        isAuthReady = true;
+                        resolve();
+                    });
+                });
+
+                // После аутентификации, проверяем профиль
+                await checkUserProfile();
+
+            } catch (e) {
+                console.error("Firebase initialization error:", e);
+                isAuthReady = true; // Продолжаем, но без БД
+            }
+        }
+        
+        // --- Проверка и загрузка профиля ---
+        async function checkUserProfile() {
+            if (!isAuthReady || !db || !userId) return;
+
+            const profileRef = doc(db, `artifacts/${appId}/users/${userId}/profile/user_info`);
+            try {
+                const profileSnap = await getDoc(profileRef);
+                if (profileSnap.exists()) {
+                    userProfile = profileSnap.data();
+                    console.log("User profile loaded:", userProfile);
+                    // Профиль есть, скрываем модальное окно и показываем контент
+                    document.getElementById('profile-modal').classList.add('hidden');
+                    document.getElementById('profile-modal').classList.remove('flex');
+                    renderSection('chat'); // Показываем стартовый раздел
+                } else {
+                    console.log("User profile not found. Showing registration modal.");
+                    // Профиля нет, показываем модальное окно
+                    document.getElementById('profile-modal').classList.add('flex');
+                    document.getElementById('profile-modal').classList.remove('hidden');
+                }
+            } catch (e) {
+                console.error("Error checking user profile:", e);
+                // При ошибке БД, показываем модальное окно для ввода данных (как запасной вариант)
+                document.getElementById('profile-modal').classList.add('flex');
+                document.getElementById('profile-modal').classList.remove('hidden');
+            }
+        }
+
+        // --- Сохранение профиля ---
+        document.getElementById('profile-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const name = document.getElementById('p-name').value;
+            const age = document.getElementById('p-age').value;
+            const gender = document.getElementById('p-gender').value;
+            const city = document.getElementById('p-city').value;
+            const tgId = window.Telegram?.WebApp?.initDataUnsafe?.user?.id || 'TEST_TG_ID';
+
+            const newProfile = {
+                name,
+                age: parseInt(age),
+                gender,
+                city,
+                telegramId: tgId,
+                registrationDate: new Date().toISOString()
+            };
+
+            if (db && userId) {
+                const profileRef = doc(db, `artifacts/${appId}/users/${userId}/profile/user_info`);
+                try {
+                    await setDoc(profileRef, newProfile);
+                    userProfile = newProfile;
+                    console.log("Profile saved successfully.");
+                    // Скрываем модальное окно и запускаем приложение
+                    document.getElementById('profile-modal').classList.add('hidden');
+                    document.getElementById('profile-modal').classList.remove('flex');
+                    renderSection('chat');
+                } catch (e) {
+                    console.error("Error saving profile:", e);
+                    alert("Ошибка сохранения профиля. Попробуйте снова.");
+                }
+            } else {
+                // Если БД не инициализирована (ошибка), просто показываем контент
+                userProfile = newProfile;
+                document.getElementById('profile-modal').classList.add('hidden');
+                document.getElementById('profile-modal').classList.remove('flex');
+                renderSection('chat');
+            }
+        });
+
+        // --- Управление разделами ---
+        const contentDiv = document.getElementById('content');
+        
+        function renderSection(sectionName) {
+            // Проверка, заполнен ли профиль
+            if (!userProfile && sectionName !== 'profile') {
+                console.log("Profile missing, redirecting to modal check.");
+                checkUserProfile();
+                return;
+            }
+
+            // Обновление активной кнопки навигации
+            document.querySelectorAll('.nav-button').forEach(btn => {
+                if (btn.dataset.section === sectionName) {
+                    btn.classList.add('text-indigo-600', 'active-nav');
+                    btn.classList.remove('text-gray-500');
+                } else {
+                    btn.classList.remove('text-indigo-600', 'active-nav');
+                    btn.classList.add('text-gray-500');
+                }
+            });
+
+            // Рендеринг содержимого
+            let htmlContent = '';
+            switch(sectionName) {
+                case 'chat':
+                    htmlContent = renderChat();
+                    break;
+                case 'lessons':
+                    htmlContent = renderLessons();
+                    break;
+                case 'live':
+                    htmlContent = renderLive();
+                    break;
+                case 'quests':
+                    htmlContent = renderQuests();
+                    break;
+                case 'commerce':
+                    htmlContent = renderCommerce();
+                    break;
+                case 'profile':
+                    htmlContent = renderProfile();
+                    break;
+            }
+            contentDiv.innerHTML = htmlContent;
+
+            // Дополнительная логика для раздела "Уроки" после рендеринга
+            if (sectionName === 'lessons') {
+                document.getElementById('filter-controls').addEventListener('change', applyLessonFilters);
+                document.getElementById('lessons-list').addEventListener('click', handleLessonRating);
+                applyLessonFilters(); // Изначальная загрузка всех уроков
+            }
+        }
+        
+        // --- Рендер функций для каждого раздела ---
+
+        function renderChat() {
+            return `
+                <div class="space-y-4">
+                    <h2 class="text-3xl font-bold text-gray-800">💬 Чат Клуба</h2>
+                    <p class="text-gray-600">Общий чат для обсуждения фокусов, вопросов и идей. (Здесь будет реализация чата)</p>
+                    
+                    <div class="bg-white p-4 rounded-xl shadow-lg h-96 overflow-y-auto">
+                        <!-- Пример сообщений -->
+                        <div class="text-sm mb-3">
+                            <span class="font-semibold text-indigo-500">Миша:</span> Всем привет! У кого есть идеи для нового фокуса с монетами?
+                        </div>
+                        <div class="text-sm mb-3 text-right">
+                            <span class="font-semibold text-green-500">Я (Вы):</span> Я только что освоил "Легкое исчезновение". Супер трюк!
+                        </div>
+                        <!-- ... -->
+                    </div>
+                </div>
+            `;
+        }
+
+        function renderLessons() {
+            // Уникальные теги для фильтров
+            const allProps = [...new Set(allLessons.map(l => l.props))];
+            const allTags = [...new Set(allLessons.flatMap(l => l.tags))];
+            
+            return `
+                <h2 class="text-3xl font-bold text-gray-800 mb-6">📚 Уроки Магии</h2>
+                <div id="filter-controls" class="bg-white p-4 rounded-xl shadow-lg mb-6 sticky top-20 z-10 border border-gray-100">
+                    <h3 class="font-semibold text-lg mb-3">Фильтры и Сортировка</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                        <!-- Фильтр по сложности -->
+                        <div>
+                            <label for="filter-difficulty" class="block text-sm font-medium text-gray-700 mb-1">Сложность</label>
+                            <select id="filter-difficulty" class="w-full rounded-lg border-gray-300 shadow-sm p-2 border">
+                                <option value="all">Все (Простой - Суперсложный)</option>
+                                <option value="1">1/5 (Простой)</option>
+                                <option value="2">2/5 (Средний)</option>
+                                <option value="3">3/5 (Сложный)</option>
+                                <option value="4">4/5 (Суперсложный)</option>
+                            </select>
+                        </div>
+                        <!-- Фильтр по реквизиту -->
+                        <div>
+                            <label for="filter-props" class="block text-sm font-medium text-gray-700 mb-1">Реквизит</label>
+                            <select id="filter-props" class="w-full rounded-lg border-gray-300 shadow-sm p-2 border">
+                                <option value="all">Весь реквизит</option>
+                                ${allProps.map(prop => `<option value="${prop}">${prop}</option>`).join('')}
+                            </select>
+                        </div>
+                        <!-- Фильтр по тегам -->
+                        <div>
+                            <label for="filter-tags" class="block text-sm font-medium text-gray-700 mb-1">Теги</label>
+                            <select id="filter-tags" class="w-full rounded-lg border-gray-300 shadow-sm p-2 border">
+                                <option value="all">Все теги</option>
+                                ${allTags.map(tag => `<option value="${tag}">${tag}</option>`).join('')}
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="lessons-list" class="space-y-4">
+                    <!-- Список уроков будет сгенерирован JS -->
+                    <p class="text-center text-gray-400 mt-8">Загрузка уроков...</p>
+                </div>
+            `;
+        }
+
+        function renderLive() {
+            return `
+                <div class="space-y-4">
+                    <h2 class="text-3xl font-bold text-gray-800">🔴 Эфиры и Вебинары</h2>
+                    <p class="text-gray-600">Расписание ближайших прямых эфиров с профессиональными фокусниками.</p>
+                    
+                    <div class="bg-white p-4 rounded-xl shadow-lg">
+                        <h3 class="text-xl font-semibold mb-2 text-red-500">Следующий Эфир!</h3>
+                        <p class="text-lg font-bold">"Мастерство Кубиков" с Магом Игорем</p>
+                        <p class="text-sm text-gray-500">Четверг, 19:00 МСК (Тема недели: Кубики)</p>
+                        <button class="mt-3 bg-red-500 hover:bg-red-600 text-white py-2 px-4 rounded-lg text-sm font-medium">Смотреть Анонс</button>
+                    </div>
+                </div>
+            `;
+        }
+
+        function renderQuests() {
+            return `
+                <div class="space-y-4">
+                    <h2 class="text-3xl font-bold text-gray-800">🗺️ Квесты и Приключения</h2>
+                    <p class="text-gray-600">Личное приключение для ${userProfile?.name || 'юного мага'}! Выберите квест и начните свой путь.</p>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <!-- Квест 1: Визуальная новелла -->
+                        <div class="bg-white p-4 rounded-xl shadow-lg border-4 border-yellow-400">
+                            <h3 class="text-xl font-bold text-yellow-600">Тайна Заброшенной Шкатулки</h3>
+                            <p class="text-sm text-gray-600 mt-1">Текстово-визуальная новелла: разгадайте загадки старого фокусника.</p>
+                            <button class="mt-3 bg-yellow-500 hover:bg-yellow-600 text-white py-2 px-4 rounded-lg text-sm font-medium">Начать приключение</button>
+                        </div>
+                        <!-- Квест 2: Логика/Пазл -->
+                        <div class="bg-white p-4 rounded-xl shadow-lg">
+                            <h3 class="text-xl font-bold text-blue-600">Лабиринт Зеркал</h3>
+                            <p class="text-sm text-gray-600 mt-1">Серия логических пазлов, проверяющих ваше внимание и ловкость.</p>
+                            <button class="mt-3 bg-blue-500 hover:bg-blue-600 text-white py-2 px-4 rounded-lg text-sm font-medium">Старт</button>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function renderCommerce() {
+            return `
+                <div class="space-y-4">
+                    <h2 class="text-3xl font-bold text-gray-800">💰 Коммерческая История (Как Зарабатывать)</h2>
+                    <p class="text-gray-600">Секретный раздел: как монетизировать свои навыки фокусника. (Раздел дорабатывается)</p>
+                    
+                    <div class="bg-white p-4 rounded-xl shadow-lg border-l-4 border-green-500">
+                        <h3 class="text-xl font-semibold mb-2 text-green-700">Начальный Уровень</h3>
+                        <ul class="list-disc list-inside text-gray-600 text-sm space-y-1">
+                            <li>Оформление своего первого шоу.</li>
+                            <li>Ценообразование для дня рождения.</li>
+                            <li>10 советов по продаже трюка.</li>
+                        </ul>
+                    </div>
+                </div>
+            `;
+        }
+
+        function renderProfile() {
+            const p = userProfile || { name: 'Неизвестно', age: 'N/A', gender: 'N/A', city: 'N/A', telegramId: 'N/A' };
+            const tgId = p.telegramId || 'ID не привязан';
+            
+            return `
+                <div class="space-y-4">
+                    <h2 class="text-3xl font-bold text-gray-800">👤 Профиль Участника</h2>
+                    <div class="bg-white p-6 rounded-xl shadow-lg">
+                        <h3 class="text-xl font-bold text-indigo-600 mb-4">${p.name}</h3>
+                        <div class="grid grid-cols-2 gap-y-2 text-sm">
+                            <div class="font-medium text-gray-500">Возраст:</div>
+                            <div class="font-semibold text-gray-800">${p.age}</div>
+                            
+                            <div class="font-medium text-gray-500">Пол:</div>
+                            <div class="font-semibold text-gray-800">${p.gender === 'male' ? 'Мальчик' : (p.gender === 'female' ? 'Девочка' : 'Не указан')}</div>
+
+                            <div class="font-medium text-gray-500">Город:</div>
+                            <div class="font-semibold text-gray-800">${p.city}</div>
+
+                            <div class="font-medium text-gray-500">Telegram ID:</div>
+                            <div class="font-semibold text-gray-800 break-all">${tgId}</div>
+                            
+                            <div class="font-medium text-gray-500">UID (для Firestore):</div>
+                            <div class="font-semibold text-gray-800 break-all">${userId}</div>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+
+        // --- Логика Фильтров Уроков ---
+
+        function applyLessonFilters() {
+            const difficultyFilter = document.getElementById('filter-difficulty').value;
+            const propsFilter = document.getElementById('filter-props').value;
+            const tagsFilter = document.getElementById('filter-tags').value;
+            const lessonList = document.getElementById('lessons-list');
+
+            let filteredLessons = allLessons.filter(lesson => {
+                // Фильтр по сложности
+                if (difficultyFilter !== 'all' && lesson.difficulty !== parseInt(difficultyFilter)) {
+                    return false;
+                }
+                // Фильтр по реквизиту
+                if (propsFilter !== 'all' && lesson.props !== propsFilter) {
+                    return false;
+                }
+                // Фильтр по тегам
+                if (tagsFilter !== 'all' && !lesson.tags.includes(tagsFilter)) {
+                    return false;
+                }
+                return true;
+            });
+
+            if (filteredLessons.length === 0) {
+                lessonList.innerHTML = `<p class="text-center text-xl text-gray-500 mt-10 p-4 bg-white rounded-lg shadow-md">Нет уроков, соответствующих выбранным фильтрам. Попробуйте изменить настройки.</p>`;
+                return;
+            }
+
+            // Рендеринг отфильтрованных уроков
+            lessonList.innerHTML = filteredLessons.map(lesson => `
+                <div class="lesson-card bg-white p-5 rounded-xl shadow-md flex justify-between items-center transition duration-200 hover:shadow-lg">
+                    <div>
+                        <h4 class="text-xl font-bold text-indigo-700">${lesson.title}</h4>
+                        <p class="text-sm text-gray-500 mt-1">Реквизит: <span class="font-semibold">${lesson.props}</span> | Сложность: ${lesson.difficulty}/5</p>
+                        <div class="mt-2 flex flex-wrap gap-2">
+                            ${lesson.tags.map(tag => `<span class="px-2 py-0.5 text-xs font-medium bg-gray-100 text-gray-600 rounded-full">${tag}</span>`).join('')}
+                        </div>
+                    </div>
+                    
+                    <!-- Рейтинг сложности от детей (UI) -->
+                    <div class="text-right flex flex-col items-end">
+                        <div class="flex items-center space-x-1 mb-2">
+                            <span class="text-yellow-500 text-xl">⭐</span>
+                            <span class="font-bold text-lg text-gray-800">${lesson.rating.toFixed(1)}</span>
+                            <span class="text-xs text-gray-400">(${lesson.ratedBy})</span>
+                        </div>
+                        <div data-lesson-id="${lesson.id}" class="rating-controls space-y-1">
+                            <button class="rate-success w-full bg-green-500 hover:bg-green-600 text-white text-xs py-1 px-2 rounded-lg font-medium shadow-sm" data-action="success">
+                                Получилось! ✅
+                            </button>
+                            <!-- Упрощенная оценка легкости 1-5 -->
+                            <div class="flex space-x-1 justify-end">
+                                <span class="text-xs text-gray-500 mr-1">Легкость (1-5):</span>
+                                <select class="rate-ease bg-gray-50 border border-gray-300 rounded-md text-xs p-0.5" data-action="ease">
+                                    <option value="0" selected disabled>Оценить</option>
+                                    <option value="1">1</option>
+                                    <option value="2">2</option>
+                                    <option value="3">3</option>
+                                    <option value="4">4</option>
+                                    <option value="5">5</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // --- Обработка Рейтинга ---
+        function handleLessonRating(event) {
+            const button = event.target.closest('button.rate-success');
+            const select = event.target.closest('select.rate-ease');
+
+            if (button || select) {
+                const controls = event.target.closest('.rating-controls');
+                const lessonId = controls.dataset.lessonId;
+                const action = button ? button.dataset.action : 'ease';
+                let message = `Оценка для урока ID ${lessonId}: `;
+
+                if (action === 'success') {
+                    // Симуляция отправки данных
+                    message += "Получилось! (Успешно отправлено)";
+                    button.disabled = true;
+                    button.textContent = 'Оценено! 👍';
+                } else if (action === 'ease' && select.value !== '0') {
+                    // Симуляция отправки данных
+                    message += `Легкость ${select.value}/5 (Успешно отправлено)`;
+                    select.disabled = true;
+                }
+                
+                // В реальном приложении здесь будет вызов функции setDoc для обновления рейтинга в Firestore
+                console.log(message);
+            }
+        }
+
+
+        // --- Инициализация и обработчики событий ---
+        document.addEventListener('DOMContentLoaded', () => {
+            // Инициализация Firebase и проверка профиля
+            initFirebase();
+
+            // Обработчики для навигационных кнопок
+            document.querySelectorAll('.nav-button').forEach(button => {
+                button.addEventListener('click', (e) => {
+                    const section = e.currentTarget.dataset.section;
+                    renderSection(section);
+                });
+            });
+            
+            // Загрузить стартовый раздел (будет переопределено после проверки профиля)
+            contentDiv.innerHTML = `<div class="text-center mt-20"><div class="animate-spin rounded-full h-10 w-10 border-b-2 border-indigo-500 mx-auto"></div><p class="mt-4 text-gray-500">Загрузка клуба...</p></div>`;
+        });
+    </script>
+
+</body>
+</html>
