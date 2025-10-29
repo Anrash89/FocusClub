@@ -104,8 +104,8 @@
                         <label for="p-gender" class="block text-sm font-medium text-gray-700">Пол</label>
                         <select id="p-gender" required class="mt-1 block w-full rounded-lg border-gray-300 shadow-sm focus:border-indigo-500 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 p-2 border">
                             <option value="">Выберите</option>
-                            <option value="male">Мальчик</option>
-                            <option value="female">Девочка</option>
+                            <option value="male">Мужской</option>
+                            <option value="female">Женский</option>
                         </select>
                     </div>
                 </div>
@@ -490,7 +490,7 @@
                             <div class="font-semibold text-gray-800">${p.age}</div>
                             
                             <div class="font-medium text-gray-500">Пол:</div>
-                            <div class="font-semibold text-gray-800">${p.gender === 'male' ? 'Мальчик' : (p.gender === 'female' ? 'Девочка' : 'Не указан')}</div>
+                            <div class="font-semibold text-gray-800">${p.gender === 'male' ? 'Мужской' : (p.gender === 'female' ? 'Женский' : 'Не указан')}</div>
 
                             <div class="font-medium text-gray-500">Город:</div>
                             <div class="font-semibold text-gray-800">${p.city}</div>
